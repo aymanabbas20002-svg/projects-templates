@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { CheckoutButton } from '@/components/checkout-button';
-import { clerkConfigured } from '@/lib/clerk-config';
 import { getServerAuthContext } from '@/lib/server-auth';
 import { primaryButton } from '@/lib/ui';
 
@@ -22,9 +21,7 @@ const features = [
 ];
 
 export default async function CheckoutPage() {
-  // Clerk's auth() throws when clerkMiddleware is not active, so only call it when
-  // auth is actually configured (same guard as the landing page and dashboard).
-  const authContext = clerkConfigured ? await getServerAuthContext() : null;
+  const authContext = await getServerAuthContext();
   return (
     <main className="relative min-h-screen w-full">
       <div className="mx-auto flex min-h-screen w-full max-w-lg flex-col items-center justify-center px-4 pb-12 pt-12">
@@ -55,7 +52,7 @@ export default async function CheckoutPage() {
           </ul>
 
           <div className="mt-8">
-            {authContext?.userId ? (
+            {authContext.userId ? (
               <CheckoutButton label={`Unlock access \u2014 $10.00`} />
             ) : (
               <Link className={`${primaryButton} w-full`} href="/sign-in?redirect_to=/checkout">
